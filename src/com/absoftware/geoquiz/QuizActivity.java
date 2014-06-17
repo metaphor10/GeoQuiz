@@ -4,48 +4,34 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.os.Build;
 
 public class QuizActivity extends ActionBarActivity {
-	
+	private static final String TAG="QuizActivity";
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
-
+        Log.d(TAG,"On Create !!!!!!!!!!!!!!!!!!!!!!!!!!1");
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new PlaceholderFragment())
                     .commit();
         }
         
-        /*mTrueButton = (Button) findViewById( R.id.true_button); 
-        mTrueButton.setOnClickListener( new View.OnClickListener() {
-        	@Override 
-        	public void onClick( View v) { 
-        		Toast.makeText(QuizActivity.this, R.string.incorrect_toast, Toast.LENGTH_SHORT).show();
-        		// Does nothing yet, but soon! 
-        	
-        	} });
         
-
-        	
-        mFalseButton = (Button) findViewById( R.id.false_button);
-        mFalseButton.setOnClickListener( new View.OnClickListener() { 
-        	@Override public void onClick( View v) {
-        		Toast.makeText(QuizActivity.this, R.string.correct_toast, Toast.LENGTH_SHORT).show();
-        	// Does nothing yet, but soon! 
-        	} });*/
 
         	
 
@@ -77,9 +63,11 @@ public class QuizActivity extends ActionBarActivity {
      * A placeholder fragment containing a simple view.
      */
     public static class PlaceholderFragment extends Fragment {
+    	public static final String TAG = "PlaceholderFragment";
     	private Button mTrueButton;
     	private Button mFalseButton;
-    	private Button mNextButton;
+    	private ImageButton mNextButton;
+    	private ImageButton mPreviousButton;
     	private TextView mQuestionTextView;
     	private View rootView;
     	 private TrueFalse[] mQuestionBank = new TrueFalse[] { 
@@ -98,10 +86,18 @@ public class QuizActivity extends ActionBarActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
+        	
              rootView = inflater.inflate(R.layout.fragment_quiz, container, false);
-             
+             Log.d(TAG,"onCreate !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
               mQuestionTextView = (TextView) rootView.findViewById(R.id.question_text_view); 
-             
+              mQuestionTextView.setOnClickListener(new View.OnClickListener(){
+                  @Override
+                  public void onClick(View v) {
+                  	mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length; 
+                  	updateQuestion();
+                  	
+                  }
+              });
              
              
              
@@ -120,11 +116,24 @@ public class QuizActivity extends ActionBarActivity {
                    checkAnswer(false);
                 }
             });
-            mNextButton = (Button) rootView.findViewById(R.id.next_button);
+            mNextButton = (ImageButton) rootView.findViewById(R.id.next_button);
             mNextButton.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
                 	mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length; 
+                	updateQuestion();
+                	
+                }
+            });
+            mPreviousButton = (ImageButton) rootView.findViewById(R.id.previous_button);
+            mPreviousButton.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                	
+                	
+                		mCurrentIndex = Math.abs((mCurrentIndex - 1)) % mQuestionBank.length;
+                	
+                	 
                 	updateQuestion();
                 	
                 }
